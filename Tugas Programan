@@ -1,0 +1,23 @@
+#include <stdio.h>
+int main()
+int score;
+printf("Input Score\t:");
+scanf("%i,&score);
+if(score >=75 && score <=100)
+{
+printf("Grade score\t: Good Job");
+}
+else if(score >=60 && score <=69)
+{
+printf("Grade score\t: Nice Job");
+}
+else if(score >=50 && score <=59)
+{
+printf("Grade score\t: Okay");
+}
+else
+{
+printf("Grade score\t: Try Again Next Year");
+}
+return 0:
+}
