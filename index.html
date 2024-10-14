@@ -200,27 +200,31 @@
     }
 
     // Function to calculate the result and replace with lyrics
-    function calculateResult()
-    {
+    function calculateResult() {
         try {
             let result = eval(currentInput);
             display.innerHTML = result;
 
-            // After calculation, show the next lyric line if available
-            if (currentLine < lyrics.length) {
-                setTimeout(() => {
-                    display.innerHTML = `<span class="lyrics">${lyrics[currentLine]}</span>`;
-                    currentLine++;
-                }, 1000);  // Show result for 1 second before displaying lyrics
-            } else {
-                currentLine = 0;  // Reset to the first lyric line after all lyrics have been displayed
-            }
-
+            // After calculation, show lyrics automatically
+            displayLyrics();
             // Trigger heart animations after showing the lyric
             triggerHearts();
         } catch (error) {
             display.innerHTML = 'Error';
         }
+    }
+
+    // Function to display lyrics one by one
+    function displayLyrics() {
+        const lyricInterval = 3000; // Time between lyrics in milliseconds
+        const lyricDisplay = setInterval(() => {
+            if (currentLine < lyrics.length) {
+                display.innerHTML = `<span class="lyrics">${lyrics[currentLine]}</span>`;
+                currentLine++;
+            } else {
+                clearInterval(lyricDisplay); // Stop the interval when done
+            }
+        }, lyricInterval);
     }
 
     // Function to trigger heart animations
