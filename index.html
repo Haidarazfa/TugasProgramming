@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Calculator with Hearts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .calculator {
+            width: 320px;
+            height: 480px;
+            background-color: #333;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .display {
+            background-color: #111;
+            color: #fff;
+            font-size: 18px;
+            text-align: right;
+            padding: 20px;
+            margin-bottom: 10px;
+            height: 80px;
+            border-radius: 10px;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        .button {
+            padding: 20px;
+            background-color: #666;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .button.orange {
+            background-color: #ff9500;
+        }
+
+        .button.gray {
+            background-color: #a6a6a6;
+        }
+
+        .button:active {
+            opacity: 0.8;
+        }
+
+        /* Style for lyrics appearing on the display */
+        .lyrics {
+            font-size: 20px;
+            color: pink;
+        }
+
+        /* Heart animation styles */
+        .heart {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
+            transform: rotate(45deg);
+            animation: float 5s infinite ease-in-out;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .heart:before, .heart:after {
+            content: "";
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart:before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart:after {
+            left: 25px;
+            top: 0;
+        }
+
+        @keyframes float {
+            0% {
+                opacity: 1;
+                bottom: -50px;
+                transform: translateX(0) rotate(45deg);
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 0;
+                bottom: 100vh;
+                transform: translateX(200px) rotate(45deg);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+        <div class="button gray" onclick="clearDisplay()">AC</div>
+        <div class="button gray">+/-</div>
+        <div class="button gray">%</div>
+        <div class="button orange" onclick="appendOperation('/')">/</div>
+
+        <div class="button" onclick="appendNumber('7')">7</div>
+        <div class="button" onclick="appendNumber('8')">8</div>
+        <div class="button" onclick="appendNumber('9')">9</div>
+        <div class="button orange" onclick="appendOperation('*')">*</div>
+
+        <div class="button" onclick="appendNumber('4')">4</div>
+        <div class="button" onclick="appendNumber('5')">5</div>
+        <div class="button" onclick="appendNumber('6')">6</div>
+        <div class="button orange" onclick="appendOperation('-')">-</div>
+
+        <div class="button" onclick="appendNumber('1')">1</div>
+        <div class="button" onclick="appendNumber('2')">2</div>
+        <div class="button" onclick="appendNumber('3')">3</div>
+        <div class="button orange" onclick="appendOperation('+')">+</div>
+
+        <div class="button gray" onclick="appendNumber('0')">0</div>
+        <div class="button" onclick="appendNumber('.')">.</div>
+        <div class="button orange" onclick="calculateResult()">=</div>
+    </div>
+</div>
+
+<!-- Heart animations -->
+<div class="heart" style="left: 50px;"></div>
+<div class="heart" style="left: 150px;"></div>
+<div class="heart" style="left: 250px;"></div>
+<div class="heart" style="left: 350px;"></div>
+
+<script>
+    const display = document.getElementById('display');
+    let currentInput = '';
+    let currentLine = 0;
+
+    // Lyrics array
+    const lyrics = [
+        "You're always on my mind, that's how much I care",
+        "I can't think of a time, that you weren't there",
+        "I know that I'd be lying if I didn't want you here",
+        "'Cause, baby, I'm in love, and why can't you just live near?"
+    ];
+
+    // Function to clear the display
+    function clearDisplay() {
+        currentInput = '';
+        display.innerHTML = '0';
+        currentLine = 0;  // Reset lyrics line counter
+    }
+
+    // Function to append numbers to the display
+    function appendNumber(number) {
+        if (display.innerHTML === '0') {
+            currentInput = number;
+        } else {
+            currentInput += number;
+        }
+        display.innerHTML = currentInput;
+    }
+
+    // Function to append operations
+    function appendOperation(operation) {
+        currentInput += ` ${operation} `;
+        display.innerHTML = currentInput;
+    }
+
+    // Function to calculate the result and replace with lyrics
+    function calculateResult()
+    {
+        try {
+            let result = eval(currentInput);
+            display.innerHTML = result;
+
+            // After calculation, show the next lyric line if available
+            if (currentLine < lyrics.length) {
+                setTimeout(() => {
+                    display.innerHTML = `<span class="lyrics">${lyrics[currentLine]}</span>`;
+                    currentLine++;
+                }, 1000);  // Show result for 1 second before displaying lyrics
+            } else {
+                currentLine = 0;  // Reset to the first lyric line after all lyrics have been displayed
+            }
+
+            // Trigger heart animations after showing the lyric
+            triggerHearts();
+        } catch (error) {
+            display.innerHTML = 'Error';
+        }
+    }
+
+    // Function to trigger heart animations
+    function triggerHearts() {
+        const hearts = document.querySelectorAll('.heart');
+        hearts.forEach(heart => {
+            heart.style.animation = 'none'; // Reset animation
+            setTimeout(() => {
+                heart.style.animation = ''; // Re-trigger animation
+            }, 10);
+        });
+    }
+
+</script>
+
+</body>
+</html>
