@@ -6,78 +6,32 @@
     <title>Lyrics Calculator with Hearts</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #ffe6f2;
             overflow: hidden;
             position: relative;
-        }
-
-        .calculator {
-            width: 320px;
-            height: 480px;
-            background-color: #333;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            display: flex;
             flex-direction: column;
-            padding: 20px;
-            position: relative;
-            z-index: 2;
         }
 
-        .display {
-            background-color: #111;
-            color: #fff;
-            font-size: 18px;
-            text-align: right;
-            padding: 20px;
-            margin-bottom: 10px;
-            height: 80px;
-            border-radius: 10px;
-            overflow-y: hidden;
-            overflow-x: hidden;
-            position: relative;
+        @keyframes float {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: translateY(-50px) scale(1.1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-150px) scale(1.2);
+            }
         }
 
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 10px;
-        }
-
-        .button {
-            padding: 20px;
-            background-color: #666;
-            color: white;
-            font-size: 18px;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .button.orange {
-            background-color: #ff9500;
-        }
-
-        .button.gray {
-            background-color: #a6a6a6;
-        }
-
-        .button:active {
-            opacity: 0.8;
-        }
-
-        /* Style for lyrics appearing on the display */
-        .lyrics {
-            font-size: 20px;
-            color: pink;
-        }
-
-        /* Heart animation styles */
         .heart {
             width: 50px;
             height: 50px;
@@ -124,9 +78,79 @@
             }
         }
 
+        .calculator {
+            width: 320px;
+            height: 480px;
+            background-color: #333;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: 24px;
+            color: #ff80bf;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .display {
+            background-color: #111;
+            color: #fff;
+            font-size: 24px;
+            text-align: right;
+            padding: 20px;
+            margin-bottom: 10px;
+            height: 80px;
+            border-radius: 10px;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .lyrics {
+            font-size: 20px;
+            color: #ff80bf;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        .button {
+            padding: 20px;
+            background-color: #666;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .button.orange {
+            background-color: #ff9500;
+        }
+
+        .button.gray {
+            background-color: #a6a6a6;
+        }
+
+        .button:active {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
+
+<div class="title">@Haidarazfa</div>
 
 <div class="calculator">
     <div class="display" id="display">0</div>
@@ -157,7 +181,6 @@
     </div>
 </div>
 
-<!-- Heart animations -->
 <div class="heart" style="left: 50px;"></div>
 <div class="heart" style="left: 150px;"></div>
 <div class="heart" style="left: 250px;"></div>
@@ -167,8 +190,8 @@
     const display = document.getElementById('display');
     let currentInput = '';
     let currentLine = 0;
+    let intervalId = null;
 
-    // Lyrics array
     const lyrics = [
         "You're always on my mind, that's how much I care",
         "I can't think of a time, that you weren't there",
@@ -176,14 +199,13 @@
         "'Cause, baby, I'm in love, and why can't you just live near?"
     ];
 
-    // Function to clear the display
     function clearDisplay() {
         currentInput = '';
         display.innerHTML = '0';
-        currentLine = 0;  // Reset lyrics line counter
+        currentLine = 0;
+        clearInterval(intervalId);
     }
 
-    // Function to append numbers to the display
     function appendNumber(number) {
         if (display.innerHTML === '0') {
             currentInput = number;
@@ -193,51 +215,30 @@
         display.innerHTML = currentInput;
     }
 
-    // Function to append operations
     function appendOperation(operation) {
         currentInput += ` ${operation} `;
         display.innerHTML = currentInput;
     }
 
-    // Function to calculate the result and replace with lyrics
     function calculateResult() {
-        try {
-            let result = eval(currentInput);
-            display.innerHTML = result;
+        clearInterval(intervalId);
+        display.innerHTML = '';
 
-            // After calculation, show lyrics automatically
-            displayLyrics();
-            // Trigger heart animations after showing the lyric
-            triggerHearts();
-        } catch (error) {
-            display.innerHTML = 'Error';
-        }
+        currentLine = 0;
+        displayLyrics();
     }
 
-    // Function to display lyrics one by one
     function displayLyrics() {
-        const lyricInterval = 3000; // Time between lyrics in milliseconds
-        const lyricDisplay = setInterval(() => {
-            if (currentLine < lyrics.length) {
-                display.innerHTML = `<span class="lyrics">${lyrics[currentLine]}</span>`;
-                currentLine++;
-            } else {
-                clearInterval(lyricDisplay); // Stop the interval when done
-            }
-        }, lyricInterval);
-    }
+        if (currentLine >= lyrics.length) {
+            clearInterval(intervalId);
+            return;
+        }
 
-    // Function to trigger heart animations
-    function triggerHearts() {
-        const hearts = document.querySelectorAll('.heart');
-        hearts.forEach(heart => {
-            heart.style.animation = 'none'; // Reset animation
-            setTimeout(() => {
-                heart.style.animation = ''; // Re-trigger animation
-            }, 10);
-        });
-    }
+        display.innerHTML = `<span class="lyrics">${lyrics[currentLine]}</span>`;
+        currentLine++;
 
+        intervalId = setTimeout(displayLyrics, 3000);
+    }
 </script>
 
 </body>
